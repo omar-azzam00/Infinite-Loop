@@ -1,6 +1,6 @@
 Auth class =>
 
-1) User getCurrentUser(): returns the current logged in user object, if there is none it returns null.
+1) User getCurrentUser(): returns the current logged in user, if there is none it returns null.
 
 2) User logIn(String email, String password): it tries to log in with the provided creditntials and
 it will return a user object, if it failed - password is incorrect for example - it will return null.
