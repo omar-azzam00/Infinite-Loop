@@ -12,6 +12,3 @@ email field must not be empty.
 the password length should be at least 6.
 
 4) void logOut(): logs out the current user.
-
-!!! Note that any validation logic - like password length for example - is not the responsiblity of 
-this class !!!
