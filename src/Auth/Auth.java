@@ -47,7 +47,7 @@ public class Auth {
         try {
             Statement stmt = c.createStatement();
 
-            if (user.userName == null || user.email == null || user.mobilePhone == null || user.password == null) {
+            if (user.userName == null || user.email == null || user.mobilePhone == null || user.password == null || user.userName == "" || user.email == "" || user.mobilePhone == "" || user.password.length() < 6) {
                 return null;
             }
 
