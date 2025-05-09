@@ -1,0 +1,14 @@
+Auth class =>
+
+1) User getCurrentUser(): returns the current logged in user object, if there is none it returns null.
+
+2) User logIn(String email, String password): it tries to log in with the provided creditntials and
+it will return a user object, if it failed - password is incorrect for example - it will return null.
+
+3) User signUp(User user): it tries to create an account with the provided user object and it will return
+the same object, if it failed - the account already exists for example - it will return null.
+
+4) void logOut(): logs out the current user and if there is none it will do nothing.
+
+!!! Note that any validation logic - like password length for example - is not the responsiblity of 
+this class !!!
