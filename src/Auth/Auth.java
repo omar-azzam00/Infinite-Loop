@@ -1,6 +1,7 @@
 package Auth;
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class Auth {
     public Auth() {
@@ -8,6 +9,115 @@ public class Auth {
             setUp();
             settedUp = true;
         }
+    }
+
+    public User run() {
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Welcome to infinite loop!\n");
+
+        User user = getCurrentUser();
+
+        if (user == null) {
+            System.out.println("Do you want to (1) login or (2) sign up ?");
+            System.out.print("Enter your option (1 or 2): ");
+
+            String opt = "";
+
+            while (true) {
+
+                opt = s.nextLine().trim();
+
+                if (opt.equals("1")) {
+                    break;
+                } else if (opt.equals("2")) {
+                    break;
+                } else {
+                    System.out.print("Error! please enter 1 or 2 only: ");
+                }
+            }
+
+            String userName = "";
+            if (opt.equals("2")) {
+                System.out.print("Enter your user name: ");
+                userName = s.nextLine();
+            }
+
+            String email = "";
+            System.out.print("Enter your email: ");
+
+            while (true) {
+                email = s.nextLine().trim();
+
+                if (email.isEmpty()) {
+                    System.out.print("Email can't be empty! enter again: ");
+                } else {
+                    break;
+                }
+            }
+
+            String mobilePhone = "";
+            if (opt.equals("2")) {
+                System.out.print("Enter your mobile phone: ");
+                mobilePhone = s.nextLine();
+            }
+
+            String password = "";
+            System.out.print("Enter password: ");
+
+            while (true) {
+                password = s.nextLine();
+
+                if (password.length() < 6) {
+                    System.out.print("password can't be less than 6 chars! enter again: ");
+                } else {
+                    break;
+                }
+            }
+
+            if (opt.equals("1")) {
+                user = logIn(email, password);
+                if (user == null) {
+                    System.out.println("Credentials are invalid!");
+                    System.exit(1);
+                }
+                return user;
+            }
+
+            if (opt.equals("2")) {
+                user = signUp(new User(userName, email, mobilePhone, password));
+                if (user == null) {
+                    System.out.println("This user already exists!");
+                    System.exit(1);
+                }
+                return user;
+            }
+        } else {
+            System.out.println("You are logged in as " + user.email + ", do you want to (1) continue or (2) log out ?");
+            System.out.print("Enter your option (1 or 2): ");
+            String opt = "";
+
+            while (true) {
+
+                opt = s.nextLine().trim();
+
+                if (opt.equals("1")) {
+                    break;
+                } else if (opt.equals("2")) {
+                    break;
+                } else {
+                    System.out.print("Error! please enter 1 or 2 only: ");
+                }
+            }
+
+            if (opt.equals("1")) {
+                return user;
+            } else {
+                logOut();
+                return run();
+            }
+        }
+        return null;
     }
 
     public User getCurrentUser() {
@@ -47,7 +157,8 @@ public class Auth {
         try {
             Statement stmt = c.createStatement();
 
-            if (user.userName == null || user.email == null || user.mobilePhone == null || user.password == null || user.email == "" || user.password.length() < 6) {
+            if (user.userName == null || user.email == null || user.mobilePhone == null || user.password == null
+                    || user.email == "" || user.password.length() < 6) {
                 return null;
             }
 
