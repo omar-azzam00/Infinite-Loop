@@ -1,4 +1,4 @@
-package Auth;
+package Classes;
 
 public class User {
     public String userName;

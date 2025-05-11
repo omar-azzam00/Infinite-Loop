@@ -1,14 +1,26 @@
-import Auth.User;
-import Auth.*;
-
-import java.sql.*;
+import Classes.User;
+import Classes.Budget_Analysis;
+import Classes.*;
+import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        Auth auth = new Auth();   
+        Auth auth = new Auth();
+        User user = auth.run();
 
-        User user = auth.run();   
-
-        // Now you got the user with his information, you can continue from her
+        if (user != null) {
+            System.out.println("What page do you want?\n 1. Budget & Analysis Page\n 2. Expense Tracking Page\n");
+            Scanner choice = new Scanner(System.in);
+            int choiceInt = choice.nextInt();
+            switch (choiceInt) {
+                case 1:
+                    Budget_Analysis budget_analysis = new Budget_Analysis(user, auth.getConnection());
+                    budget_analysis.menu();
+                    break;
+                case 2:
+                    break;
+                default:
+            }
+        }
     }
 }

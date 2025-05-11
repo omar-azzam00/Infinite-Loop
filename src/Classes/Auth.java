@@ -1,4 +1,4 @@
-package Auth;
+package Classes;
 
 import java.sql.*;
 import java.util.Scanner;
@@ -191,7 +191,9 @@ public class Auth {
             // System.out.println(e);
         }
     }
-
+    public Connection getConnection() {
+        return c;
+    }
     /*******************************************************************************************************/
     /* You shouldn't care about the following */
     /*******************************************************************************************************/
@@ -205,16 +207,16 @@ public class Auth {
     }
 
     private void createDB() {
-
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:infinite-loop.db");
+            System.out.println("Database connection established.");
         } catch (Exception e) {
-            // System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
-
             // throw an error that database can't be created.
         }
+        System.out.println("Current working directory: " + System.getProperty("user.dir"));
         // System.out.println("Opened database successfully");
     }
 
@@ -226,10 +228,15 @@ public class Auth {
                     mobilePhone TEXT NOT NULL,
                     password TEXT NOT NULL
                 );
-
                     CREATE TABLE IF NOT EXISTS session (
                     email TEXT PRIMARY KEY NOT NULL,
                     FOREIGN KEY (email) REFERENCES users(email)
+                );
+                CREATE IF NOT EXISTS budgets (
+                       budgetId text PRIMARY KEY NOT NULL,     
+                       category text NOT NULL,
+                       limit double NOT NULL,
+                       FOREIGN KEY (email) REFERENCES session(email)
                 );
                                 """;
 
