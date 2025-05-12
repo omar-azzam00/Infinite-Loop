@@ -1,17 +1,19 @@
 package Classes;
+
 import java.sql.*;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Budget_Analysis {
+public class Budget {
     private User user;
     private Connection c;
     private Scanner s;
-
-    public Budget_Analysis(User user, Connection c) {
+    private Expense expense;
+    public Budget(User user, Connection c) {
         this.user = user;
         this.c = c;
         this.s = new Scanner(System.in);
+        this.expense = new Expense(user, c);
         createBudgetTable();
     }
 
@@ -34,48 +36,6 @@ public class Budget_Analysis {
             System.out.println(e);
         }
 
-    }
-
-    public Budget_Analysis menu() {
-        System.out.println("1. Creat Budget\n 2. Edit Budget\n 3. Delete Budget\n");
-        int option = s.nextInt();
-        s.nextLine();
-        switch (option) {
-            case 1:
-                creat_budget();
-                break;
-            case 2:
-                try {
-                    while (true) {
-                        System.out.println("Please enter the ID you want to edit: ");
-                        String id = s.nextLine().trim();
-                        boolean check = validate_id(id);
-                        if (check) {
-                            edit_budgetTable(id);
-                            break;
-                        }
-                    }
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-                break;
-            case 3:
-                try {
-                    while (true) {
-                        System.out.println("Please enter the ID you want to delete: ");
-                        String id = s.nextLine().trim();
-                       boolean check = validate_id(id);
-                       if (check) {
-                           delete_budget(id);
-                           break;
-                       }
-                    }
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-                break;
-        }
-        return null;
     }
 
     public void creat_budget() {
@@ -171,6 +131,7 @@ public class Budget_Analysis {
                 Statement stmt = c.createStatement();
                 stmt.executeUpdate(sql);
                 valid = true;
+                System.out.println("Updated Successfully");
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -198,6 +159,7 @@ public class Budget_Analysis {
                 Statement stmt = c.createStatement();
                 stmt.executeUpdate(sql);
                 valid = true;
+                System.out.println("Updated Successfully");
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -205,15 +167,16 @@ public class Budget_Analysis {
     }
 
     public void delete_budget(String id) {
-        try{
+        try {
             String sql = String.format("delete from budgets where budgetid = '%s'", id);
             Statement st = c.createStatement();
             st.executeUpdate(sql);
             System.out.println("Deleted Successfully");
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
+
     public boolean validate_id(String id) {
         try {
             String sql = String.format("SELECT userEmail FROM budgets WHERE budgetid = '%s'", id);
@@ -228,10 +191,27 @@ public class Budget_Analysis {
                     return false;
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
         System.out.println("ID invalid");
         return false;
+    }
+
+    public void display_budget() {
+        try {
+            String sql = String.format("Select * from budgets where userEmail = '%s'", user.email);
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                String id = rs.getString("budgetid");
+                String category = rs.getString("budgetCategory");
+                double amount = rs.getDouble("budgetamount");
+                System.out.println("ID: " + id + ", Catrgiry: " + category + ", Amount: " + amount);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
     }
 }
