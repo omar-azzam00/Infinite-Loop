@@ -3,11 +3,22 @@ import java.sql.*;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Manages income records for a user, including adding, editing, and deleting income entries in a database.
+ * This class interacts with the database to store and manipulate income data associated with a user.
+ */
 public class IncomeController {
     private User user;
     private Connection c;
     private Scanner s;
 
+    /**
+     * Constructor for the IncomeController class that initializes the user, database connection, 
+     * and sets up a Scanner for user input. It also creates the incomes table if it doesn't exist.
+     *
+     * @param user the user object associated with the income records
+     * @param c the database connection used to interact with the incomes table
+     */
     public IncomeController(User user, Connection c) {
         this.user = user;
         this.c = c;
@@ -15,6 +26,10 @@ public class IncomeController {
         createIncomeTable();
     }
 
+    /**
+     * Creates the incomes table in the database if it doesn't already exist.
+     * The table stores income details such as ID, source, amount, date, and the associated user's email.
+     */
     private void createIncomeTable() {
         String sql = """
                 CREATE TABLE IF NOT EXISTS incomes (
@@ -36,6 +51,19 @@ public class IncomeController {
         }
     }
 
+    /**
+     * Displays the main menu for managing income records and handles user input to perform operations.
+     * <p>
+     * This method provides the following options:
+     * 1. Add Income: Allows the user to create a new income record and store it in the database.
+     * 2. Edit Income: Enables the user to modify an existing income record by its unique ID.
+     * 3. Delete Income: Removes an existing income record identified by its unique ID.
+     * <p>
+     * For operations requiring an income ID (Edit/Delete), this method validates the user-provided ID
+     * to ensure an existing income record is being modified or removed.
+     *
+     * @return null (this method does not return a meaningful value)
+     */
     public IncomeController menu() {
         System.out.println("1. Add Income\n 2. Edit Income\n 3. Delete Income\n");
         int option = s.nextInt();
@@ -78,6 +106,14 @@ public class IncomeController {
         return null;
     }
 
+    /**
+     * Adds a new income record by collecting details from the user and storing them in the database.
+     * <p>
+     * This method:
+     * - Prompts the user to enter a unique income ID and validates that it doesn't already exist.
+     * - Collects the income source, amount, and date from the user, ensuring they are valid.
+     * - Inserts the new income record into the database with the associated user's email.
+     */
     public void addIncome() {
         try {
             String incomeId;
@@ -137,6 +173,17 @@ public class IncomeController {
         }
     }
 
+    /**
+     * Edits an existing income record by allowing the user to modify its source, amount, or date.
+     * <p>
+     * This method provides the following options:
+     * 1. Source: Modifies the income's source.
+     * 2. Amount: Updates the income's amount.
+     * 3. Date: Changes the income's date.
+     * 4. Change All: Updates all fields (source, amount, and date).
+     *
+     * @param id the unique ID of the income record to be edited
+     */
     public void editIncome(String id) {
         System.out.println("What would you like to change?\n 1. Source\n 2. Amount\n 3. Date\n 4. Change All\n");
         int option = s.nextInt();
@@ -159,6 +206,16 @@ public class IncomeController {
         }
     }
 
+    /**
+     * Updates the source of an existing income record in the database.
+     * <p>
+     * This method:
+     * - Retrieves and displays the current source of the income record.
+     * - Prompts the user to enter a new source and validates that it is not empty.
+     * - Updates the income's source in the database.
+     *
+     * @param id the unique ID of the income record to update
+     */
     public void editSource(String id) {
         boolean valid = false;
         while (!valid) {
@@ -186,6 +243,16 @@ public class IncomeController {
         }
     }
 
+    /**
+     * Updates the amount of an existing income record in the database.
+     * <p>
+     * This method:
+     * - Retrieves and displays the current amount of the income record.
+     * - Prompts the user to enter a new amount and validates that it is greater than 0.
+     * - Updates the income's amount in the database.
+     *
+     * @param id the unique ID of the income record to update
+     */
     public void editAmount(String id) {
         boolean valid = false;
         while (!valid) {
@@ -215,6 +282,16 @@ public class IncomeController {
         }
     }
 
+    /**
+     * Updates the date of an existing income record in the database.
+     * <p>
+     * This method:
+     * - Retrieves and displays the current date of the income record.
+     * - Prompts the user to enter a new date and validates that it is not empty.
+     * - Updates the income's date in the database.
+     *
+     * @param id the unique ID of the income record to update
+     */
     public void editDate(String id) {
         boolean valid = false;
         while (!valid) {
@@ -242,6 +319,11 @@ public class IncomeController {
         }
     }
 
+    /**
+     * Deletes an income record from the database based on its unique ID.
+     *
+     * @param id the unique ID of the income record to be deleted
+     */
     public void deleteIncome(String id) {
         try {
             String sql = String.format("DELETE FROM incomes WHERE incomeId = '%s'", id);
@@ -253,6 +335,12 @@ public class IncomeController {
         }
     }
 
+    /**
+     * Validates whether an income ID exists and belongs to the current user.
+     *
+     * @param id the unique ID of the income record to validate
+     * @return true if the ID exists and belongs to the user, false otherwise
+     */
     public boolean validateId(String id) {
         try {
             String sql = String.format("SELECT userEmail FROM incomes WHERE incomeId = '%s'", id);
