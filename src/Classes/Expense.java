@@ -4,11 +4,19 @@ import java.sql.*;
 import java.util.Objects;
 import java.util.Scanner;
 import java.time.*;
+
 public class Expense {
     private User user;
     private Connection c;
     private Scanner s;
 
+    /**
+     * Constructs an Expense object with a specified User and database connection.
+     * Initializes a Scanner instance and sets up the "expenses" table in the database.
+     *
+     * @param user An object representing the currently logged-in user.
+     * @param c    The Connection object used to interact with the database.
+     */
     public Expense(User user, Connection c) {
         this.user = user;
         this.c = c;
@@ -16,6 +24,17 @@ public class Expense {
         createExpenseTable();
     }
 
+    /**
+     * Creates the "expenses" table in the database if it does not already exist.
+     * <p>
+     * The table includes the following columns:
+     * - expenseid: A unique identifier for the expense (primary key).
+     * - expensecategory: The category of the expense stored as text.
+     * - expenseamount: The amount for the expense stored as a double.
+     * - expensedate: The date of the expense stored.
+     * - isrecurring: A boolean that shows whether the expense is recurring.
+     * - userEmail: The email of the user associated with the expense stored as text (foreign key refrencing email in the sessions table).
+     */
     private void createExpenseTable() {
         String sql = """
                 CREATE TABLE IF NOT EXISTS expenses (
@@ -38,6 +57,15 @@ public class Expense {
 
     }
 
+    /**
+     * Displays a menu to the user for managing expenses and performs actions based on user input.
+     * <p>
+     * The menu options include:
+     * 1. Adding a new expense.
+     * 2. Editing an existing expense by ID.
+     * 3. Deleting an expense by ID.
+     * 4. Displaying all expenses.
+     */
     public void menu() {
         System.out.println(" 1.Add Expense\n 2. Edit Expense\n 3. Delete Expense\n 4. Display Expenses\n");
         int option = s.nextInt();
@@ -67,10 +95,10 @@ public class Expense {
                         System.out.println("Please enter the ID you want to delete: ");
                         String id = s.nextLine().trim();
                         boolean check = validate_id(id);
-                         if (check) {
-                         delete_expense(id);
-                        break;
-                         }
+                        if (check) {
+                            delete_expense(id);
+                            break;
+                        }
                     }
                 } catch (Exception e) {
                     System.out.println(e);
@@ -82,6 +110,20 @@ public class Expense {
         }
     }
 
+    /**
+     * Adds a new expense to the database.
+     * <p>
+     * This method prompts the user to input details for a new expense including:
+     * expense ID, amount, category, date, and whether the expense is recurring.
+     * It validates each input to ensure that it is valid before inserting the expense into the database.
+     * <p>
+     * Behavior and Input Validation:
+     * - Prompts the user to enter a unique expense ID and checks if the ID already exists in the database.
+     * - Ensures the expense amount is not empty or less than are equal to zero.
+     * - Ensures the category is not empty.
+     * - Validates the date format to ensure it complies with the 'yyyy-mm-dd' format.
+     * - Asks the user whether the expense is recurring and stores the response accordingly.
+     */
     public void add_expense() {
         try {
             String expenseid;
@@ -98,7 +140,11 @@ public class Expense {
                     ResultSet rs = stmt.executeQuery(sql);
                     if (rs.next()) {
                         System.out.println("ID already exists");
+                        rs.close();
+                        stmt.close();
                     } else {
+                        rs.close();
+                        stmt.close();
                         break;
                     }
                 } catch (Exception e) {
@@ -109,8 +155,8 @@ public class Expense {
             while (true) {
                 System.out.println("Enter expense amount: ");
                 expenseamount = s.nextDouble();
-                if (expenseamount == 0.0) {
-                    System.out.println("Amount cannot be empty or a Zero!");
+                if (expenseamount <= 0.0) {
+                    System.out.println("Amount cannot be empty or less than or equal to Zero!");
                     continue;
                 }
                 s.nextLine();
@@ -134,10 +180,10 @@ public class Expense {
                     System.out.println("Date cannot be empty!");
                     continue;
                 }
-                try{
+                try {
                     LocalDate.parse(expensedate);
                     break;
-                }catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("Invalid Date Format");
                 }
             }
@@ -157,19 +203,25 @@ public class Expense {
             String sql = "";
             if (recurring) {
                 sql = String.format("INSERT INTO expenses(expenseId, expensecategory, expenseamount, expensedate, isrecurring, userEmail) VALUES('%s','%s','%f','%s','%b','%s');",
-                        expenseid, expensecategory, expenseamount, expensedate,true, user.email);
-            }
-            else {
+                        expenseid, expensecategory, expenseamount, expensedate, true, user.email);
+            } else {
                 sql = String.format("INSERT INTO expenses(expenseId, expensecategory, expenseamount, expensedate, isrecurring, userEmail) VALUES('%s','%s','%f','%s','%b','%s');",
                         expenseid, expensecategory, expenseamount, expensedate, false, user.email);
             }
             Statement stmt = c.createStatement();
             stmt.executeUpdate(sql);
+            stmt.close();
         } catch (SQLException e) {
             System.out.println(e);
         }
     }
 
+    /**
+     * Edits the expense in the "expenses" table for a specific expense ID.
+     * Allows the user to update either the category, the amount, or both.
+     *
+     * @param id The unique identifier of the expense entry to be edited.
+     */
     public void edit_expensesTable(String id) {
         System.out.println("What would you like to change?\n 1. Expense Category\n 2. Expense Amount\n 3. Change Both\n");
         int option = s.nextInt();
@@ -190,6 +242,13 @@ public class Expense {
         }
     }
 
+    /**
+     * Edits the category of an expense by changing it in the database.
+     * Prompts the user to input a new category for the specified expense id.
+     * The update operation will only succeed if the entered category is valid.
+     *
+     * @param id The unique identifier of the expense whose category is to be edited.
+     */
     public void edit_category(String id) {
         boolean valid = false;
         while (!valid) {
@@ -201,6 +260,8 @@ public class Expense {
                     String category = rs.getString("expensecategory");
                     System.out.println("Current value: " + category);
                 }
+                rs.close();
+                st.close();
                 System.out.println("Enter new expense category: ");
                 String newCategory = s.nextLine().trim();
                 if (newCategory.trim().isEmpty()) {
@@ -209,6 +270,7 @@ public class Expense {
                 String sql = String.format("Update expenses set expensecategory = '%s' WHERE expenseid = '%s'", newCategory, id);
                 Statement stmt = c.createStatement();
                 stmt.executeUpdate(sql);
+                stmt.close();
                 valid = true;
                 System.out.println("Updated Successfully");
             } catch (Exception e) {
@@ -217,6 +279,13 @@ public class Expense {
         }
     }
 
+    /**
+     * Edits the amount of an expense in the database associated with the given expense id.
+     * The method retrieves the current expense amount, prompts the user to input a new amount,
+     * and updates the expense record if a valid new amount is provided.
+     *
+     * @param id the unique identifier of the expense to be updated
+     */
     public void edit_amount(String id) {
         boolean valid = false;
         while (!valid) {
@@ -228,15 +297,18 @@ public class Expense {
                     double amount = rs.getDouble("expenseamount");
                     System.out.println("Current value: " + amount);
                 }
+                rs.close();
+                st.close();
                 System.out.println("Enter new expense amount: ");
                 double newAmount = s.nextDouble();
-                if (newAmount == 0.0) {
+                if (newAmount <= 0.0) {
                     continue;
                 }
                 s.nextLine();
                 String sql = String.format("Update expenses set expenseamount = '%f' WHERE expenseid = '%s'", newAmount, id);
                 Statement stmt = c.createStatement();
                 stmt.executeUpdate(sql);
+                stmt.close();
                 valid = true;
                 System.out.println("Updated Successfully");
             } catch (Exception e) {
@@ -244,13 +316,23 @@ public class Expense {
             }
         }
     }
+
+    /**
+     * Validates whether the given expense id exists in the database and if it is associated with the current user's email.
+     *
+     * @param id the expense ID to validate
+     * @return true if the ID is valid and belongs to the current user, false otherwise
+     */
     public boolean validate_id(String id) {
+
         try {
             String sql = String.format("SELECT userEmail FROM expenses WHERE expenseid = '%s'", id);
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             if (rs.next()) {
                 String email = rs.getString("userEmail");
+                rs.close();
+                stmt.close();
                 if (Objects.equals(email, user.email)) {
                     return true;
                 } else {
@@ -258,33 +340,49 @@ public class Expense {
                     return false;
                 }
             }
+            rs.close();
+            stmt.close();
         } catch (Exception e) {
             System.out.println(e);
         }
         System.out.println("ID invalid");
         return false;
     }
+
+    /**
+     * Retrieves and displays all expense records associated with the user's email from the expenses table.
+     * Each expense record includes its id, category, and amount, which are displayed to the user.
+     */
     public void display_expenses() {
         try {
             String sql = String.format("Select * from expenses where userEmail = '%s'", user.email);
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            while(rs.next()) {
+            while (rs.next()) {
                 String id = rs.getString("expenseid");
                 String category = rs.getString("expensecategory");
                 double amount = rs.getDouble("expenseamount");
                 System.out.println("ID: " + id + ", Catrgiry: " + category + ", Amount: " + amount);
             }
+            rs.close();
+            stmt.close();
         } catch (Exception e) {
             System.out.println(e);
         }
 
     }
+
+    /**
+     * Deletes an expense entry from the database based on the provided expense ID.
+     *
+     * @param id The unique identifier of the expense to be deleted from the database.
+     */
     public void delete_expense(String id) {
         try {
             String sql = String.format("delete from expenses where expenseid = '%s'", id);
             Statement st = c.createStatement();
             st.executeUpdate(sql);
+            st.close();
             System.out.println("Deleted Successfully");
         } catch (Exception e) {
             System.out.println(e);
