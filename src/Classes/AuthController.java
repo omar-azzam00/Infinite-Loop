@@ -3,6 +3,10 @@ package Classes;
 import java.sql.*;
 
 public class AuthController {
+    /**
+     * Creates an AuthController object and calls setUp if no object has not been
+     * created by this class before.
+     */
     public AuthController() {
         if (!settedUp) {
             setUp();
@@ -10,7 +14,14 @@ public class AuthController {
         }
     }
 
-    // it was log in previously.
+    /**
+     * tries to log in the user with the provided credentials
+     * 
+     * @param email    user's email.
+     * @param password user's password.
+     * 
+     * @return the user object with its data if successful, null otherwise.
+     */
     public User authenticate(String email, String password) {
         User user = getUser(email, false, password);
 
@@ -21,7 +32,13 @@ public class AuthController {
         return user;
     }
 
-    // it was signUp previously
+    /**
+     * it tries to create an account with the provided user object
+     * 
+     * @param user an user object containing user's data
+     * 
+     * @return the user object with its data if successful, null otherwise.
+     */
     public User createUser(User user) {
         try {
             Statement stmt = c.createStatement();
@@ -47,6 +64,9 @@ public class AuthController {
         }
     }
 
+    /**
+     * logs out the current user and clears the session table.
+     */
     public void logOut() {
         try {
             Statement stmt = c.createStatement();
@@ -68,11 +88,21 @@ public class AuthController {
     private Connection c = null;
     private static boolean settedUp = false;
 
+    /**
+     * it gets a connection with the database and configure it with the required
+     * tables.
+     * 
+     * Note that it is a low level function that shouldn't be called by you.
+     * 
+     */
     private void setUp() {
         createDB();
         createUsersTable();
     }
 
+    /**
+     * @return the current logged in user, if there is none it returns null.
+     */
     public User getCurrentUser() {
         String sql = "SELECT * FROM session;";
         ResultSet result;
@@ -96,6 +126,11 @@ public class AuthController {
         return null;
     }
 
+    /**
+     * it gets a connection with database creating it if it doesn't exist.
+     * 
+     * Note that it is a low level function that shouldn't be called by you.
+     */
     private void createDB() {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -110,10 +145,16 @@ public class AuthController {
         // System.out.println("Opened database successfully");
     }
 
+    /**
+     * It creates users table and session table with the provided schemas.
+     * 
+     * Note that it is a low level function that shouldn't be called by you.
+     */
+
     private void createUsersTable() {
         String sql = """
                     CREATE TABLE IF NOT EXISTS users (
-                    userName TEXT NOT NULL,
+                    userName TEXT UNIQUE NOT NULL,
                     email TEXT PRIMARY KEY NOT NULL,
                     mobilePhone TEXT NOT NULL,
                     password TEXT NOT NULL
@@ -123,7 +164,7 @@ public class AuthController {
                     FOREIGN KEY (email) REFERENCES users(email)
                 );
                 CREATE IF NOT EXISTS budgets (
-                       budgetId text PRIMARY KEY NOT NULL,     
+                       budgetId text PRIMARY KEY NOT NULL,
                        category text NOT NULL,
                        limit double NOT NULL,
                        FOREIGN KEY (email) REFERENCES users(email)
@@ -140,6 +181,18 @@ public class AuthController {
 
     }
 
+    /**
+     * This is the backend for both authenticate and getCurrentUser methods.
+     * 
+     * Note that it is a low level function that shouldn't be called by you.
+     * 
+     * @param email           user email
+     * @param alreadyLoggedIn if this is true the password field will be discarded
+     *                        if not it will be used.
+     * @param password        user's password.
+     * 
+     * @return user object with its data if successful and null otherwise.
+     */
     private User getUser(String email, boolean alreadyLoggedIn, String password) {
         String sql;
 
@@ -168,6 +221,16 @@ public class AuthController {
         }
     }
 
+    /**
+     * This method is used by authenticate.
+     * 
+     * it updates the session with the provided email, so the user doesn't need to
+     * rewrite his data every time
+     * 
+     * Note that it is a low level function that shouldn't be called by you.
+     * 
+     * @param email user email
+     */
     private void updateSession(String email) {
         logOut();
 
@@ -184,6 +247,10 @@ public class AuthController {
         }
     }
 
+    /**
+     * 
+     * @return the database connection.
+     */
     public Connection getConnection() {
         return c;
     }

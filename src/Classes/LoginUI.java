@@ -2,10 +2,21 @@ package Classes;
 
 import java.util.Scanner;
 
+
+ 
 public class LoginUI {
     public static AuthController auth = new AuthController();
     Scanner s = new Scanner(System.in);
 
+    /**
+     * This method is the main method in the class which should be called.
+     * It starts the authentication flow of the program.
+     * 
+     * Note that in case of any invalid input this method will exit the program with
+     * status code 1
+     * 
+     * @return user object containing user's data
+     */
     public User menu() {
         User user = auth.getCurrentUser();
 
@@ -65,6 +76,15 @@ public class LoginUI {
 
     }
 
+    /**
+     * This method starts the login flow by asking the user for his email and his
+     * password
+     * 
+     * Note that in the case of invalid credentials this method will exit the
+     * program with status code 1
+     * 
+     * @return user object containing user's data
+     */
     public User showLoginForm() {
         System.out.print("Enter your email: ");
         String email = s.nextLine();
@@ -87,6 +107,15 @@ public class LoginUI {
         return user;
     }
 
+    /**
+     * This method starts the sign up flow by asking the user for his data
+     * (userName, email, mobilePhone, password)
+     * 
+     * Note that in the case of any invalid input this method will exit the program
+     * with status code 1
+     * 
+     * @return user object containing user's data
+     */
     public User showSignUpForm() {
         System.out.print("Enter your user name: ");
         String userName = s.nextLine();
@@ -113,6 +142,15 @@ public class LoginUI {
         return user;
     }
 
+    /**
+     * Check if the email and the password are valid for login.
+     * 
+     * @param email    For the email to be valid it shouldn't be empty
+     * @param password For the password to be valid its length should be at least 6
+     *                 characters
+     * 
+     * @return true if the parameters are valid, false otherwise.
+     */
     public Boolean validateLogin(String email, String password) {
         if (email.isEmpty()) {
             System.out.println("");
@@ -129,6 +167,21 @@ public class LoginUI {
         return true;
     }
 
+    /**
+     * Check if the user object data are valid to create an account.
+     * 
+     * @param userName    For the userName to be valid it should be unique and not
+     *                    empty.
+     * @param email       For the email to be valid it should be unique and not
+     *                    empty.
+     * @param mobilePhone
+     *                    Any mobilePhone is valid even if its empty as the user may
+     *                    not want to add a mobilePhone.
+     * @param password    For the password to be valid its length should be at least
+     *                    6 characters
+     * 
+     * @return true if the parameters are valid, false otherwise.
+     */
     public Boolean validateSignUp(String userName, String email, String mobilePhone, String password) {
         if (userName.isEmpty()) {
             System.out.println("");
