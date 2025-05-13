@@ -2,6 +2,11 @@ package Classes;
 
 import java.util.Scanner;
 
+/**
+ * The budgetAnalysis class provides functionality to manage and analyze budget data.
+ * It interacts with Budget and Analysis objects to perform operations like creating budgets, editing budgets,
+ * deleting budgets, displaying all budget information, and performing budget analysis.
+ */
 public class budgetAnalysis {
     Budget budget;
     Analysis analysis;

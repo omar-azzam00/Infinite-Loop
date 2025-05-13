@@ -5,6 +5,9 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.time.*;
 
+/**
+ * This class is responsible for managing user expenses including creating, displaying, updating, and deleting expense records in a database.
+ */
 public class Expense {
     private User user;
     private Connection c;

@@ -2,6 +2,9 @@ package Classes;
 
 import java.sql.*;
 
+/**
+ * AuthController manages user authentication, account creation, and session management.
+ */
 public class AuthController {
     /**
      * Creates an AuthController object and calls setUp if no object has not been

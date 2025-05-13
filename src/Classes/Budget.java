@@ -4,6 +4,11 @@ import java.sql.*;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * The Budget class provides functionality to manage budgets in a database.
+ * Each budget is related to a user and contains information such as budget ID, category, and amount.
+ * The class allows creating budgets and editing their amount and category.
+ */
 public class Budget {
     private User user;
     private Connection c;

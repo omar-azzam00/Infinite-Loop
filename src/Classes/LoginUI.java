@@ -3,7 +3,10 @@ package Classes;
 import java.util.Scanner;
 
 
- 
+/**
+ * The LoginUI class manages the user interface for login and sign-up flow.
+ * It interacts with the AuthController to facilitate authentication including: login, sign-up, user validation, and session management.
+ */
 public class LoginUI {
     public static AuthController auth = new AuthController();
     Scanner s = new Scanner(System.in);

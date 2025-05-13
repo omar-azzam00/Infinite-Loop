@@ -2,6 +2,12 @@ package Classes;
 
 import java.sql.*;
 
+/**
+ * The Analysis class provides functionality to analyze a user's spending habits and budget usage.
+ *
+ * This class is used to assess how the user's total expenses in different categories compare to their budget limits,
+ * providing insights on whether the user is under budget or over budget.
+ */
 public class Analysis {
     private User user;
     private Connection c;
