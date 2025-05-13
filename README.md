@@ -8,12 +8,12 @@ The workspace contains two folders, where:
 
 - `src`: The folder that contains all the source code for the application
 - `src/Classes`: This subfolder contains the application classes.
-- `src/App`: This subfolder contains the entry point of the application
-- `lib`: The folder to maintain dependencies
+- `src/App`: This subfolder contains the entry point of the application.
+- `lib`: The folder to maintain dependencies.
 
 We used `Javadoc` to generate our project documentaion, to view it:
-- Navigate to the `docs` folder in our project directory
-- Open `index.html` and view it in any web browser
+- Navigate to the `docs` folder in our project directory.
+- Open `index.html` and view it in any web browser.
 
 > If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
 
