@@ -1,6 +1,6 @@
-package App;
+package com.infinite_loop.App;
 
-import Classes.*;
+import com.infinite_loop.Classes.*;
 
 import java.util.Scanner;
 
