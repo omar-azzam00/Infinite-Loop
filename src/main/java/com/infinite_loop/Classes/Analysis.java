@@ -1,4 +1,4 @@
-package Classes;
+package com.infinite_loop.Classes;
 
 import java.sql.*;
 

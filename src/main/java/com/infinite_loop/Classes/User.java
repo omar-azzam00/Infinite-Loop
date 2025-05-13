@@ -1,4 +1,5 @@
-package Classes;
+package com.infinite_loop.Classes;
+
 
 /**
  * The User class represents a user with basic information such as username, email, mobile phone number, and password.
