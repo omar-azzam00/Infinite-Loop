@@ -5,7 +5,8 @@ import com.infinite_loop.Classes.*;
 import java.util.Scanner;
 
 /*
- this is a change done by yousef hesham (20230515) for lap task
+ this is a change done by yousef hesham ali (20230515)
+ * @author Yousef Hesham Ali
  */
 
 /**
